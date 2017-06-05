@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Program:</strong>
+  <%= @program_quotum.program %>
+</p>
+
+<p>
+  <strong>University:</strong>
+  <%= @program_quotum.university %>
+</p>
+
+<p>
+  <strong>Quota number:</strong>
+  <%= @program_quotum.quota_number %>
+</p>
+
+<%= link_to 'Edit', edit_program_quotum_path(@program_quotum) %> |
+<%= link_to 'Back', program_quota_path %>

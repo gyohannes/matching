@@ -1,0 +1,32 @@
+<%= form_with(model: program_quotum, local: true) do |form| %>
+  <% if program_quotum.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(program_quotum.errors.count, "error") %> prohibited this program_quotum from being saved:</h2>
+
+      <ul>
+      <% program_quotum.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :program_id %>
+    <%= form.collection_select :program_id, Program.all, :id, :name, id: :program_quotum_program_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :university_id %>
+    <%= form.collection_select :university_id, University.all, :id, :name, id: :program_quotum_university_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :quota_number %>
+    <%= form.number_field :quota_number, id: :program_quotum_quota_number %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

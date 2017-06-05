@@ -1,0 +1,32 @@
+<%= form_with(model: exam_result, local: true) do |form| %>
+  <% if exam_result.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(exam_result.errors.count, "error") %> prohibited this exam_result from being saved:</h2>
+
+      <ul>
+      <% exam_result.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :exam_id %>
+    <%= form.collection_select :exam_id, Exam.all,:id,:to_s, id: :exam_result_exam_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :program_id %>
+    <%= form.collection_select :program_id,Program.all,:id,:to_s, id: :exam_result_program_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :result %>
+    <%= form.text_field :result, id: :exam_result_result %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

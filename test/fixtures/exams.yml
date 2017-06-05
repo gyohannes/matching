@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  applicant: one
+  aptitude_exam_result: 1.5
+  interview_result: 1.5
+
+two:
+  applicant: two
+  aptitude_exam_result: 1.5
+  interview_result: 1.5

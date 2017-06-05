@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>University Choices</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Program choice</th>
+      <th>University</th>
+      <th>Choice number</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @university_choices.each do |university_choice| %>
+      <tr>
+        <td><%= university_choice.program_choice %></td>
+        <td><%= university_choice.university %></td>
+        <td><%= university_choice.choice_number %></td>
+        <td><%= link_to 'Show', university_choice %></td>
+        <td><%= link_to 'Edit', edit_university_choice_path(university_choice) %></td>
+        <td><%= link_to 'Destroy', university_choice, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New University Choice', new_university_choice_path %>

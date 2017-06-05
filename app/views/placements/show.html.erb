@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Applicant:</strong>
+  <%= @placement.applicant %>
+</p>
+
+<p>
+  <strong>Program:</strong>
+  <%= @placement.program %>
+</p>
+
+<p>
+  <strong>University:</strong>
+  <%= @placement.university %>
+</p>
+
+<%= link_to 'Edit', edit_placement_path(@placement) %> |
+<%= link_to 'Back', placements_path %>

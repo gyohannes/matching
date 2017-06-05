@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Exam:</strong>
+  <%= @exam_result.exam %>
+</p>
+
+<p>
+  <strong>Program:</strong>
+  <%= @exam_result.program %>
+</p>
+
+<p>
+  <strong>Result:</strong>
+  <%= @exam_result.result %>
+</p>
+
+<%= link_to 'Edit', edit_exam_result_path(@exam_result) %> |
+<%= link_to 'Back', exam_results_path %>

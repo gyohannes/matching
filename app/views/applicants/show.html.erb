@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>First name:</strong>
+  <%= @applicant.first_name %>
+</p>
+
+<p>
+  <strong>Father name:</strong>
+  <%= @applicant.father_name %>
+</p>
+
+<p>
+  <strong>Grand father name:</strong>
+  <%= @applicant.grand_father_name %>
+</p>
+
+<p>
+  <strong>Gender:</strong>
+  <%= @applicant.gender %>
+</p>
+
+<p>
+  <strong>Email:</strong>
+  <%= @applicant.email %>
+</p>
+
+<p>
+  <strong>Date of birth:</strong>
+  <%= @applicant.date_of_birth %>
+</p>
+
+<%= link_to 'Edit', edit_applicant_path(@applicant) %> |
+<%= link_to 'Back', applicants_path %>

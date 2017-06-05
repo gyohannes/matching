@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  exam: one
+  program: one
+  result: 1.5
+
+two:
+  exam: two
+  program: two
+  result: 1.5

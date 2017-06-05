@@ -1,0 +1,22 @@
+<h3>Matching List</h3><br/>
+
+<table class='table table-bordered'>
+  <thead>
+    <tr>
+      <th>Applicant</th>
+      <th>Program</th>
+      <th>University</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @placements.each do |placement| %>
+      <tr>
+        <td><%= placement.applicant %></td>
+        <td><%= placement.program %></td>
+        <td><%= placement.university %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+

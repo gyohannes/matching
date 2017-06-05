@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Program Quota</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Program</th>
+      <th>University</th>
+      <th>Quota number</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @program_quota.each do |program_quotum| %>
+      <tr>
+        <td><%= program_quotum.program %></td>
+        <td><%= program_quotum.university %></td>
+        <td><%= program_quotum.quota_number %></td>
+        <td><%= link_to 'Show', program_quotum %></td>
+        <td><%= link_to 'Edit', edit_program_quotum_path(program_quotum) %></td>
+        <td><%= link_to 'Destroy', program_quotum, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Program Quotum', new_program_quotum_path %>

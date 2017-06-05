@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Applicant:</strong>
+  <%= @program_choice.applicant %>
+</p>
+
+<p>
+  <strong>Program:</strong>
+  <%= @program_choice.program %>
+</p>
+
+<p>
+  <strong>Choice number:</strong>
+  <%= @program_choice.choice_number %>
+</p>
+
+<%= link_to 'Edit', edit_program_choice_path(@program_choice) %> |
+<%= link_to 'Back', program_choices_path %>

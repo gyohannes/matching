@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Applicant:</strong>
+  <%= @exam.applicant %>
+</p>
+
+<p>
+  <strong>Aptitude exam result:</strong>
+  <%= @exam.aptitude_exam_result %>
+</p>
+
+<p>
+  <strong>Interview result:</strong>
+  <%= @exam.interview_result %>
+</p>
+
+<%= link_to 'Edit', edit_exam_path(@exam) %> |
+<%= link_to 'Back', exams_path %>

@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  program: one
+  university: one
+  quota_number: 1
+
+two:
+  program: two
+  university: two
+  quota_number: 1

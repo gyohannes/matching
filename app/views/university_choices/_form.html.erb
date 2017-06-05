@@ -1,0 +1,32 @@
+<%= form_with(model: university_choice, local: true) do |form| %>
+  <% if university_choice.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(university_choice.errors.count, "error") %> prohibited this university_choice from being saved:</h2>
+
+      <ul>
+      <% university_choice.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :program_choice_id %>
+    <%= form.collection_select :program_choice_id, ProgramChoice.all, :id , :to_s, id: :university_choice_program_choice_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :university_id %>
+    <%= form.collection_select :university_id, University.all, :id, :to_s, id: :university_choice_university_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :choice_number %>
+    <%= form.number_field :choice_number, id: :university_choice_choice_number %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

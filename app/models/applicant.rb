@@ -1,0 +1,68 @@
+class Applicant < ApplicationRecord
+
+  has_many :program_choices
+  has_one :exam
+  has_one :placement
+  
+  def self.match
+    applicants = Applicant.all.sort_by{ |a| a.aptitude_and_interview_result}.reverse
+     Applicant.iterate_applicants(applicants)
+  end
+
+  def self.iterate_applicants(applicants)
+    applicants.each do |a|
+      placed = false
+      if a.placement.blank?
+        a.program_choices.order('choice_number').each do |pc|
+          if placed == true
+              break
+          end
+        	pc.university_choices.order('choice_number').each do |uc|
+            placed = Applicant.final_match(a,pc,uc)
+            if placed == true
+              break
+            end
+          end
+        end
+      end
+    end
+  end
+
+  def self.final_match(applicant,pc,uc)
+    match_result = false
+    applicants = Applicant.joins([:program_choices=>:university_choices],[:exam=>:exam_results]).where('exam_results.program_id = ? 
+      and university_choices.university_id = ?', pc.program_id,uc.university_id).uniq.reject{|x| !x.placement.blank?}.
+    sort_by{|x| x.total_result(pc.program_id)}.reverse
+    if pc.program.remaining_quota(uc.university_id) > 0 and applicants.include?(applicant)
+      if pc.program.remaining_quota(uc.university_id) >= applicants.index(applicant) + 1
+        Placement.create(applicant_id: applicant.id, program_id: pc.program_id, university_id: uc.university_id)
+        match_result = true
+      else
+        better_applicants = applicants.select{|x| applicants.index(x) < applicants.index(applicant)}
+        Applicant.iterate_applicants(better_applicants)
+        if pc.program.remaining_quota(uc.university_id) > 0
+          Placement.create(applicant_id: applicant.id, program_id: pc.program_id, university_id: uc.university_id)
+          match_result = true
+        end
+      end
+    end
+    return match_result
+  end
+
+  def total_result(program)
+    return program_exam_result(program) + aptitude_and_interview_result
+  end
+
+  def aptitude_and_interview_result
+    return exam.aptitude_exam_result + exam.interview_result
+  end
+
+  def program_exam_result(program)
+    exam.exam_results.where('program_id = ?',program).first.try(:result) || 0
+  end
+
+  def to_s
+    [first_name, father_name, grand_father_name].join(' ')
+  end
+
+end

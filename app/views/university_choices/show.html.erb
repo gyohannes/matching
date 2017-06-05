@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Program choice:</strong>
+  <%= @university_choice.program_choice %>
+</p>
+
+<p>
+  <strong>University:</strong>
+  <%= @university_choice.university %>
+</p>
+
+<p>
+  <strong>Choice number:</strong>
+  <%= @university_choice.choice_number %>
+</p>
+
+<%= link_to 'Edit', edit_university_choice_path(@university_choice) %> |
+<%= link_to 'Back', university_choices_path %>
