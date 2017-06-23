@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Aptitude weight:</strong>
+  <%= @setting.aptitude_weight %>
+</p>
+
+<p>
+  <strong>Interview weight:</strong>
+  <%= @setting.interview_weight %>
+</p>
+
+<p>
+  <strong>Exam weight:</strong>
+  <%= @setting.exam_weight %>
+</p>
+
+<%= link_to 'Edit', edit_setting_path(@setting) %> |
+<%= link_to 'Back', settings_path %>

@@ -1,0 +1,32 @@
+<%= form_with(model: setting, local: true) do |form| %>
+  <% if setting.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(setting.errors.count, "error") %> prohibited this setting from being saved:</h2>
+
+      <ul>
+      <% setting.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :aptitude_weight %>
+    <%= form.text_field :aptitude_weight, id: :setting_aptitude_weight %>
+  </div>
+
+  <div class="field">
+    <%= form.label :interview_weight %>
+    <%= form.text_field :interview_weight, id: :setting_interview_weight %>
+  </div>
+
+  <div class="field">
+    <%= form.label :exam_weight %>
+    <%= form.text_field :exam_weight, id: :setting_exam_weight %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
