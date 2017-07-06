@@ -21,6 +21,10 @@ class Program < ApplicationRecord
     program_choices.where('choice_number = ?',choice_number).size
   end
 
+  def total_remaining_quota
+    University.all.collect{|x| remaining_quota(x.id)}.sum
+  end
+
   def to_s
     name
   end

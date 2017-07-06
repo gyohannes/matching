@@ -31,10 +31,11 @@ class Applicant < ApplicationRecord
       end
     end
     unplaced_applicants = Applicant.unplaced_applicants
-    if unplaced_applicants.count > 0
+    if unplaced_applicants.count > 0 and ProgramQuotum.total_remainig_quota > 0
     	Applicant.iterate_applicants(unplaced_applicants)
     end
   end
+
 
   def self.final_match(applicant,pc,uc)
     match_result = false
