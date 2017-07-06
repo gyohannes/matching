@@ -9,6 +9,20 @@
   </head>
 
   <body>
+   <center>
+	<h3>Ethiopian Residency Matching Program - Ministry of Health </h3>
+<hr/>
+        <%= link_to 'Applicants', applicants_path %> |
+        <%= link_to 'Setting', settings_path %> |
+	<%= link_to 'Programs', programs_path %> |
+	<%= link_to 'Universities', universities_path %> |
+	<%= link_to 'Program Choices', program_choices_path %> |
+	<%= link_to 'University Choices', university_choices_path %> |
+	<%= link_to 'Aptitude Exam', exams_path %> |
+	<%= link_to 'Program Exam',exam_results_path %> |
+	<%= link_to 'Interview', interviews_path %> |
+	<%= link_to 'Program Quota', program_quota_path %>
+   </center><br/><br/>
     <%= yield %>
   </body>
 </html>

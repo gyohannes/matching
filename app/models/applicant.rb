@@ -9,6 +9,10 @@ class Applicant < ApplicationRecord
      Applicant.iterate_applicants(applicants)
   end
 
+  def self.unplaced_applicants
+    Applicant.all.select{ |a| a.placement.blank?}.sort_by{ |a| a.aptitude_result}.reverse
+  end
+
   def self.iterate_applicants(applicants)
     applicants.each do |a|
       placed = false
@@ -26,6 +30,10 @@ class Applicant < ApplicationRecord
         end
       end
     end
+    unplaced_applicants = Applicant.unplaced_applicants
+    if unplaced_applicants.count > 0
+    	Applicant.iterate_applicants(unplaced_applicants)
+    end
   end
 
   def self.final_match(applicant,pc,uc)
@@ -36,21 +44,14 @@ class Applicant < ApplicationRecord
     if pc.program.remaining_quota(uc.university_id) > 0 and applicants.include?(applicant)
       if pc.program.remaining_quota(uc.university_id) >= applicants.index(applicant) + 1
         Placement.create(applicant_id: applicant.id, program_id: pc.program_id, university_id: uc.university_id)
-        match_result = true
-      else
-        better_applicants = applicants.select{|x| applicants.index(x) < applicants.index(applicant)}
-        Applicant.iterate_applicants(better_applicants)
-        if pc.program.remaining_quota(uc.university_id) > 0
-          Placement.create(applicant_id: applicant.id, program_id: pc.program_id, university_id: uc.university_id)
-          match_result = true
-        end
+        match_result = true       
       end
     end
     return match_result
   end
 
   def total_result(program)
-    return program_exam_result(program) + aptitude_result + program_interview_result(program)
+    return program_interview_result(program) + program_exam_result(program) + aptitude_result
   end
 
   def aptitude_result
@@ -63,7 +64,7 @@ class Applicant < ApplicationRecord
   end
 
   def program_exam_result(program)
-    pres = exam.exam_results.where('program_id = ?',program).first.try(:result) || 0 
+    pres = exam.exam_results.find_by_program_id_and_exam_id(program,self.exam.id).result || 0
     return ((pres/100) * Setting.first.try(:exam_weight)).round(2)
   end
 
