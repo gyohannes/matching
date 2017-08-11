@@ -7,6 +7,7 @@
     <tr>
       <th>Applicant</th>
       <th>Aptitude exam result</th>
+      <th>Interview result</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -16,6 +17,7 @@
       <tr>
         <td><%= exam.applicant %></td>
         <td><%= exam.aptitude_exam_result %></td>
+        <td><%= exam.interview_result %></td>
         <td><%= link_to 'Show', exam %></td>
         <td><%= link_to 'Edit', edit_exam_path(exam) %></td>
         <td><%= link_to 'Destroy', exam, method: :delete, data: { confirm: 'Are you sure?' } %></td>

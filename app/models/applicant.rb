@@ -52,7 +52,7 @@ class Applicant < ApplicationRecord
   end
 
   def total_result(program)
-    return program_interview_result(program) + program_exam_result(program) + aptitude_result
+    return interview_result + program_exam_result(program) + aptitude_result
   end
 
   def aptitude_result
@@ -63,6 +63,10 @@ class Applicant < ApplicationRecord
     inres = exam.interviews.where('program_id = ?',program).first.try(:result) || 0 
     return ((inres/100) * Setting.first.try(:interview_weight)).round(2)
   end
+
+ def interview_result
+    return ((exam.interview_result/100) * Setting.first.try(:interview_weight)).round(2)
+ end	
 
   def program_exam_result(program)
     pres = exam.exam_results.find_by_program_id_and_exam_id(program,self.exam.id).result || 0
