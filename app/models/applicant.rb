@@ -38,22 +38,21 @@ class Applicant < ApplicationRecord
 
 
   def self.final_match(applicant,pc,uc)
-    match_result = false
     applicants = Applicant.joins([:program_choices=>:university_choices],[:exam=>:exam_results]).where('exam_results.program_id = ? 
       and university_choices.university_id = ?', pc.program_id,uc.university_id).uniq.reject{|x| !x.placement.blank?}.
     sort_by{|x| x.total_result(pc.program_id)}.reverse
     if pc.program.remaining_quota(uc.university_id) > 0 and applicants.include?(applicant)
       if pc.program.remaining_quota(uc.university_id) >= applicants.index(applicant) + 1
         Placement.create(applicant_id: applicant.id, program_id: pc.program_id, university_id: uc.university_id)
-        match_result = true
+        return true
       else
         better_applicants = applicants.select{|x| applicants.index(x) < applicants.index(applicant) }
-        if better_applicants.count > 0
-	  match_result = true
+        unless better_applicants.blank?
+	  return true
         end       
       end
     end
-    return match_result
+    return false
   end
 
   def total_result(program)
