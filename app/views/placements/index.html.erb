@@ -4,6 +4,7 @@
   <thead>
     <tr>
       <th>Applicant</th>
+      <th>Email</th>
       <th>Program</th>
       <th>University</th>
     </tr>
@@ -13,6 +14,7 @@
     <% @placements.each do |placement| %>
       <tr>
         <td><%= placement.applicant %></td>
+        <td><%= placement.applicant.email %></td>
         <td><%= placement.program %></td>
         <td><%= placement.university %></td>
       </tr>
