@@ -15,13 +15,13 @@ class Applicant < ApplicationRecord
 
   def self.iterate_applicants(applicants)
     applicants.each do |a|
-      placed = false
+      placed = a.placement.blank?
       if a.placement.blank?
         a.program_choices.order('choice_number').each do |pc|
           if placed == true
               break
           end
-        	pc.university_choices.order('choice_number').each do |uc|
+            pc.university_choices.order('choice_number').each do |uc|
             placed = Applicant.final_match(a,pc,uc)
             if placed == true
               break
@@ -45,7 +45,12 @@ class Applicant < ApplicationRecord
     if pc.program.remaining_quota(uc.university_id) > 0 and applicants.include?(applicant)
       if pc.program.remaining_quota(uc.university_id) >= applicants.index(applicant) + 1
         Placement.create(applicant_id: applicant.id, program_id: pc.program_id, university_id: uc.university_id)
-        match_result = true       
+        match_result = true
+      else
+        better_applicants = applicants.select{|x| applicants.index(x) < applicants.index(applicant) }
+        if better_applicants.count > 0
+	  match_result = true
+        end       
       end
     end
     return match_result
