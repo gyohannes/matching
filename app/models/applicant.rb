@@ -56,8 +56,15 @@ class Applicant < ApplicationRecord
     return match_result
   end
 
+  def affirmative_result
+    if gender == 'Female'
+     return Setting.first.try(:affirmative_percentage) || 0
+    end
+    return 0
+  end
+
   def total_result(program)
-    return interview_result + program_exam_result(program) + aptitude_result
+    return interview_result + program_exam_result(program) + aptitude_result + affirmative_result
   end
 
   def aptitude_result

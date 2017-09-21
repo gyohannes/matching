@@ -6,6 +6,7 @@
       <th>Aptitude weight</th>
       <th>Interview weight</th>
       <th>Exam weight</th>
+      <th>Female affirmative percentage</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -16,6 +17,7 @@
         <td><%= setting.aptitude_weight %></td>
         <td><%= setting.interview_weight %></td>
         <td><%= setting.exam_weight %></td>
+        <td><%= setting.affirmative_percentage %></td>
         <td><%= link_to 'Show', setting %></td>
         <td><%= link_to 'Edit', edit_setting_path(setting) %></td>
         <td><%= link_to 'Destroy', setting, method: :delete, data: { confirm: 'Are you sure?' } %></td>
