@@ -10,12 +10,12 @@ class Applicant < ApplicationRecord
   end
 
   def self.unplaced_applicants
-    Applicant.all.select{ |a| a.placement.blank?}.sort_by{ |a| a.aptitude_result}.reverse
+    Applicant.all.select{ |a| a.placement.blank?}.sort_by{ |a| a.aptitude_result}.shuffle
   end
 
   def self.iterate_applicants(applicants)
     applicants.each do |a|
-      placed = a.placement.blank?
+      placed = false
       if a.placement.blank?
         a.program_choices.order('choice_number').each do |pc|
           if placed == true
@@ -31,28 +31,29 @@ class Applicant < ApplicationRecord
       end
     end
     unplaced_applicants = Applicant.unplaced_applicants
-    if unplaced_applicants.count > 0 and ProgramQuotum.total_remainig_quota > 0
+    if Program.unplaced_applicant
     	Applicant.iterate_applicants(unplaced_applicants)
     end
   end
 
 
   def self.final_match(applicant,pc,uc)
+    match_result = false
     applicants = Applicant.joins([:program_choices=>:university_choices],[:exam=>:exam_results]).where('exam_results.program_id = ? 
       and university_choices.university_id = ?', pc.program_id,uc.university_id).uniq.reject{|x| !x.placement.blank?}.
     sort_by{|x| x.total_result(pc.program_id)}.reverse
     if pc.program.remaining_quota(uc.university_id) > 0 and applicants.include?(applicant)
       if pc.program.remaining_quota(uc.university_id) >= applicants.index(applicant) + 1
         Placement.create(applicant_id: applicant.id, program_id: pc.program_id, university_id: uc.university_id)
-        return true
+        match_result = true
       else
-        better_applicants = applicants.select{|x| applicants.index(x) < applicants.index(applicant) }
+        better_applicants = applicants.select{|x| applicants.index(x) < applicants.index(applicant)}
         unless better_applicants.blank?
-	  return true
-        end       
+          match_result = true
+        end     
       end
     end
-    return false
+    return match_result
   end
 
   def total_result(program)
@@ -60,7 +61,7 @@ class Applicant < ApplicationRecord
   end
 
   def aptitude_result
-    return ((exam.aptitude_exam_result/100) * Setting.first.try(:aptitude_weight)).round(2)
+    return ((exam.try(:aptitude_exam_result) || 0 /100) * Setting.first.try(:aptitude_weight)).round(2)
   end
 
   def program_interview_result(program)

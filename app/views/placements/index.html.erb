@@ -1,8 +1,9 @@
-<h3>Matching List</h3><br/>
+<h3>Placed List</h3><br/>
 
 <table class='table table-bordered'>
   <thead>
     <tr>
+      <th>Sno</th>
       <th>Applicant</th>
       <th>Email</th>
       <th>Program</th>
@@ -11,12 +12,43 @@
   </thead>
 
   <tbody>
+    <% count  = 0 %>
     <% @placements.each do |placement| %>
+    <% count  += 1%>
       <tr>
+
+        <td><%= count %></td>
         <td><%= placement.applicant %></td>
         <td><%= placement.applicant.email %></td>
         <td><%= placement.program %></td>
         <td><%= placement.university %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br/><br/><br/>
+<hr/>
+<br/><br/><br/>
+<h3>Unplaced List</h3><br/>
+
+<table class='table table-bordered'>
+  <thead>
+    <tr>
+      <th>Sno</th>
+      <th>Applicant</th>
+      <th>Email</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% count  = 0 %>
+    <% @unplaced.each do |applicant| %>
+    <% count  += 1%>
+      <tr>
+
+        <td><%= count %></td>
+        <td><%= applicant %></td>
+        <td><%= applicant.email %></td>
       </tr>
     <% end %>
   </tbody>

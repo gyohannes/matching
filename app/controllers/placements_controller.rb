@@ -5,6 +5,7 @@ class PlacementsController < ApplicationController
   # GET /placements.json
   def index
     @placements = Placement.all
+    @unplaced = Applicant.all.select{|x| x.placement.blank?}
   end
 
   def match
