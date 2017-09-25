@@ -11,7 +11,7 @@ class Program < ApplicationRecord
         unvsts.each do |u|
           if p.remaining_quota(u) > 0
             p.program_choices.each do |pc|
-              if pc.university_choices.collect{|x| x.university_id}.include?(u) and pc.applicant.placement.blank?
+              if pc.university_choices.collect{|x| x.university_id}.include?(u) and pc.applicant.placement.blank? and pc.applicant.exam.blank?
               return true
               end
             end
