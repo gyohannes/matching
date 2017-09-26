@@ -6,47 +6,36 @@ class Applicant < ApplicationRecord
   
   def self.match
     applicants = Applicant.unplaced_applicants
-     applicants.each do |a|
-        pc = a.program_choices.where('choice_number = ?',1).first
-	unless pc.blank?
-            uc = pc.university_choices.where('choice_number = ?',1).first
-            placed = Applicant.final_match(a,pc,uc)
-	end
-    end
-    applicants = Applicant.unplaced_applicants
-    Applicant.iterate_applicants(applicants)
+    programs = Program.select{|x| x.unplaced_applicants.count > 0}.sort_by{|x| x.unplaced_applicants.count}.reverse
+    Applicant.iterate_applicants(applicants,programs.first)
   end
 
   def self.unplaced_applicants
-    Applicant.joins([:program_choices=>:university_choices],[:exam=>:exam_results]).
-	distinct.includes(:placement).where(placements: {id: nil} ).shuffle
+    Applicant.joins([:program_choices=>:university_choices],[:exam=>:exam_results]).includes(:placement).where(placements: {id: nil} ).uniq.shuffle
   end
 
-  def self.iterate_applicants(applicants)
+  def self.iterate_applicants(applicants,p)
     applicants.each do |a|
       placed = false
-        a.program_choices.order('choice_number').each do |pc|
+        pc = a.program_choices.where('program_id = ?',p.id).first
+          unless pc.blank?
             pc.university_choices.order('choice_number').each do |uc|
             placed = Applicant.final_match(a,pc,uc)
-            break if placed
-	end
+            if placed == true
+              break
+	    end
+      	  end
+        end
+    end
+    programs = Program.select{|x| x.unplaced_applicants.count > 0}.sort_by{|x| x.unplaced_applicants.count}.shuffle
+    unless programs.blank?
+      programs.each do |p|
+    	applicants = p.unplaced_applicants
+    	unless applicants.blank?
+      	 Applicant.iterate_applicants(applicants,p)
+    	end
       end
     end
-    prs = Program.joins(:program_quota).select{|x| x.total_remaining_quota > 0}
-    applicants = Applicant.unplaced_applicants
-    if !prs.blank? and !applicants.blank?
-      Applicant.iterate_applicants(applicants)
-    end
-  end
-
-  def average_of_all
-    total = aptitude_result
-unless exam.blank?
-    exam.exam_results.each do |er|
-     total = total + er.result
-    end
-end
-    return total.round(2)
   end
 
   def self.final_match(applicant,pc,uc)
@@ -55,7 +44,7 @@ end
       and university_choices.university_id = ?', pc.program_id,uc.try(:university_id)).order('total_result DESC').includes(:placement).where(placements: {id: nil} ).uniq
 
     if pc.program.remaining_quota(uc.try(:university_id)) > 0 and applicants.include?(applicant)
-	match_result = true
+      match_result = true
       if pc.program.remaining_quota(uc.try(:university_id)) >= applicants.index(applicant) + 1
         Placement.create(applicant_id: applicant.id, program_id: pc.program_id, university_id: uc.university_id)
       end
@@ -75,7 +64,7 @@ end
   end
 
   def aptitude_result
-    return ((exam.try(:aptitude_exam_result) || 0 /100) * Setting.first.try(:aptitude_weight)).round(2)
+    return ((exam.aptitude_exam_result/100) * Setting.first.try(:aptitude_weight)).round(2)
   end
 
   def program_interview_result(program)

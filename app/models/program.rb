@@ -4,22 +4,13 @@ class Program < ApplicationRecord
   has_many :program_quota
   has_many :program_choices
 
-  def self.unplaced_applicant
-    Program.all.each do |p|
-      if p.total_remaining_quota > 0
-        unvsts = p.program_quota.collect{|x| x.university_id}
-        unvsts.each do |u|
-          if p.remaining_quota(u) > 0
-            p.program_choices.each do |pc|
-              if pc.university_choices.collect{|x| x.university_id}.include?(u) and pc.applicant.placement.blank? and pc.applicant.exam.blank?
-              return true
-              end
-            end
-          end
-        end
-      end
+  def unplaced_applicants
+      if total_remaining_quota > 0
+        unvsts = program_quota.select{|x| remaining_quota(x.university_id) > 0}.collect{|x| x.university_id}
+
+        return program_choices.includes([:applicant=>[:placement,:exam=>:exam_results]],:university_choices).where('university_choices.university_id in (?) and exam_results.program_id = ?',unvsts,self.id).where(placements: {id: nil}).uniq.collect{|x| x.applicant}
     end
-    return false
+    return []
   end
 
   def remaining_quota(uninversity)
