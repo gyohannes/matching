@@ -5,52 +5,59 @@ class Applicant < ApplicationRecord
   has_one :placement
   
   def self.match
-    applicants = Applicant.all.sort_by{ |a| a.aptitude_result}.reverse
-     Applicant.iterate_applicants(applicants)
+    applicants = Applicant.unplaced_applicants
+     applicants.each do |a|
+        pc = a.program_choices.where('choice_number = ?',1).first
+	unless pc.blank?
+            uc = pc.university_choices.where('choice_number = ?',1).first
+            placed = Applicant.final_match(a,pc,uc)
+	end
+    end
+    applicants = Applicant.unplaced_applicants
+    Applicant.iterate_applicants(applicants)
   end
 
   def self.unplaced_applicants
-    Applicant.all.select{ |a| a.placement.blank?}.sort_by{ |a| a.aptitude_result}.shuffle
+    Applicant.joins([:program_choices=>:university_choices],[:exam=>:exam_results]).
+	distinct.includes(:placement).where(placements: {id: nil} ).shuffle
   end
 
   def self.iterate_applicants(applicants)
     applicants.each do |a|
       placed = false
-      if a.placement.blank?
         a.program_choices.order('choice_number').each do |pc|
-          if placed == true
-              break
-          end
             pc.university_choices.order('choice_number').each do |uc|
             placed = Applicant.final_match(a,pc,uc)
-            if placed == true
-              break
-            end
-          end
-        end
+            break if placed
+	end
       end
     end
-    unplaced_applicants = Applicant.unplaced_applicants
-    if Program.unplaced_applicant
-    	Applicant.iterate_applicants(unplaced_applicants)
+    prs = Program.joins(:program_quota).select{|x| x.total_remaining_quota > 0}
+    applicants = Applicant.unplaced_applicants
+    if !prs.blank? and !applicants.blank?
+      Applicant.iterate_applicants(applicants)
     end
   end
 
+  def average_of_all
+    total = aptitude_result
+unless exam.blank?
+    exam.exam_results.each do |er|
+     total = total + er.result
+    end
+end
+    return total.round(2)
+  end
 
   def self.final_match(applicant,pc,uc)
     match_result = false
     applicants = Applicant.joins([:program_choices=>:university_choices],[:exam=>:exam_results]).where('exam_results.program_id = ? 
-      and university_choices.university_id = ?', pc.program_id,uc.university_id).uniq.reject{|x| !x.placement.blank?}.
-    sort_by{|x| x.total_result(pc.program_id)}.reverse
-    if pc.program.remaining_quota(uc.university_id) > 0 and applicants.include?(applicant)
-      if pc.program.remaining_quota(uc.university_id) >= applicants.index(applicant) + 1
+      and university_choices.university_id = ?', pc.program_id,uc.try(:university_id)).distinct.includes(:placement).where(placements: {id: nil} ).sort_by{|x| x.total_result(pc.program_id)}.reverse
+
+    if pc.program.remaining_quota(uc.try(:university_id)) > 0 and applicants.include?(applicant)
+	match_result = true
+      if pc.program.remaining_quota(uc.try(:university_id)) >= applicants.index(applicant) + 1
         Placement.create(applicant_id: applicant.id, program_id: pc.program_id, university_id: uc.university_id)
-        match_result = true
-      else
-        better_applicants = applicants.select{|x| applicants.index(x) < applicants.index(applicant)}
-        unless better_applicants.blank?
-          match_result = true
-        end     
       end
     end
     return match_result
