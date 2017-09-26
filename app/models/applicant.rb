@@ -52,7 +52,7 @@ end
   def self.final_match(applicant,pc,uc)
     match_result = false
     applicants = Applicant.joins([:program_choices=>:university_choices],[:exam=>:exam_results]).where('exam_results.program_id = ? 
-      and university_choices.university_id = ?', pc.program_id,uc.try(:university_id)).distinct.includes(:placement).where(placements: {id: nil} ).sort_by{|x| x.total_result(pc.program_id)}.reverse
+      and university_choices.university_id = ?', pc.program_id,uc.try(:university_id)).order('total_result DESC').includes(:placement).where(placements: {id: nil} ).uniq
 
     if pc.program.remaining_quota(uc.try(:university_id)) > 0 and applicants.include?(applicant)
 	match_result = true
