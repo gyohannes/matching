@@ -8,7 +8,8 @@ class Program < ApplicationRecord
       if total_remaining_quota > 0
         unvsts = program_quota.select{|x| remaining_quota(x.university_id) > 0}.collect{|x| x.university_id}
 
-        return program_choices.includes([:applicant=>[:placement,:exam=>:exam_results]],:university_choices).where('university_choices.university_id in (?) and exam_results.program_id = ?',unvsts,self.id).where(placements: {id: nil}).uniq.collect{|x| x.applicant}
+        return Applicant.joins([:exam=>:exam_results],[:program_choices=>:university_choices]).includes(:placement).
+		where(placements: {id: nil}).where('exam_results.program_id = ? and program_choices.program_id = ? and university_choices.university_id in (?)',self.id,self.id, unvsts).uniq
     end
     return []
   end
@@ -22,7 +23,7 @@ class Program < ApplicationRecord
   end
 
   def total_quota(university)
-    program_quota.where('university_id = ?',university).first.try(:quota_number) || 0
+    program_quota.where('university_id = ?',university).first.quota_number
   end
 
   def count_applicants(choice_number)
