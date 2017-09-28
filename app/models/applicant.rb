@@ -19,17 +19,10 @@ uniq.sort_by(&:aptitude_and_interview).reverse
 
   def self.iterate_applicants(applicants)
     applicants.each do |a|
-      placed = !a.placement.blank?
         a.program_choices.order('choice_number').each do |pc|
             pc.university_choices.order('choice_number').each do |uc|
             placed = Applicant.final_match(a,pc,uc)
-             if placed==true
-               break
-             end
       	  end
-	    if placed==true
-               break
-             end
         end
     end
    Applicant.match
@@ -49,6 +42,13 @@ uniq.sort_by(&:aptitude_and_interview).reverse
     return match_result
   end
 
+  def self.calculate_total_result
+    ExamResult.all.each do |er|
+      er.total_result = er.exam.applicant.total_result(er.program_id)
+      er.save
+    end
+  end
+
   def affirmative_result
     if gender == 'Female'
      return Setting.first.try(:affirmative_percentage) || 0
@@ -57,7 +57,7 @@ uniq.sort_by(&:aptitude_and_interview).reverse
   end
 
   def total_result(program)
-    return interview_result + program_exam_result(program) + aptitude_result + affirmative_result
+    return (interview_result + program_exam_result(program) + aptitude_result + affirmative_result).round(2)
   end
 
   def aptitude_and_interview

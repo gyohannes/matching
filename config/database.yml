@@ -49,6 +49,4 @@ test:
 #
 production:
   <<: *default
-  database: matching_production
-  username: matching
-  password: <%= ENV['MATCHING_DATABASE_PASSWORD'] %>
+  database: matching_development
