@@ -8,6 +8,7 @@
       <th>Email</th>
       <th>Program</th>
       <th>University</th>
+      <th>Result</th>
     </tr>
   </thead>
 
@@ -22,6 +23,7 @@
         <td><%= placement.applicant.email %></td>
         <td><%= placement.program %></td>
         <td><%= placement.university %></td>
+        <td><%= placement.applicant.exam.exam_results.find_by_program_id(placement.program_id).total_result %></td>
       </tr>
     <% end %>
   </tbody>
@@ -37,6 +39,7 @@
       <th>Sno</th>
       <th>Applicant</th>
       <th>Email</th>
+      <th>Result</th>
     </tr>
   </thead>
 
@@ -49,6 +52,20 @@
         <td><%= count %></td>
         <td><%= applicant %></td>
         <td><%= applicant.email %></td>
+        <td>
+         <table>
+                <tr>
+                 <% applicant.program_choices.each do |pc| %>
+                 <td><%= pc.program %></td>
+                 <% end %>
+           	</tr>
+                 <tr>
+                  <% applicant.program_choices.each do |pc| %>
+  	          <td><%= applicant.total_result(pc.program_id) %></td>
+                  <% end %>
+                </tr>
+         </table>
+         </td>
       </tr>
     <% end %>
   </tbody>
