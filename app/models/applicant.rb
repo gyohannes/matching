@@ -23,6 +23,9 @@ uniq.sort_by(&:aptitude_and_interview).reverse
         a.program_choices.order('choice_number').each do |pc|
             pc.university_choices.order('choice_number').each do |uc|
             placed = Applicant.final_match(a,pc,uc)
+            if placed==true
+             break
+            end
       	  end
         end
     end
@@ -59,21 +62,21 @@ uniq.sort_by(&:aptitude_and_interview).reverse
   end
 
   def aptitude_result
-    return ((exam.aptitude_exam_result/100) * Setting.first.try(:aptitude_weight)).round(2)
+    return ((exam.aptitude_exam_result.to_f/40) * Setting.first.try(:aptitude_weight)).round(2)
   end
 
   def program_interview_result(program)
     inres = exam.interviews.where('program_id = ?',program).first.try(:result) || 0 
-    return ((inres/100) * Setting.first.try(:interview_weight)).round(2)
+    return ((inres/30) * Setting.first.try(:interview_weight)).round(2)
   end
 
  def interview_result
-    return ((exam.interview_result/100) * Setting.first.try(:interview_weight)).round(2)
+    return ((exam.interview_result.to_f/30) * Setting.first.try(:interview_weight)).round(2)
  end	
 
   def program_exam_result(program)
     pres = exam.exam_results.find_by_program_id_and_exam_id(program,self.exam.id).try(:result) || 0
-    return ((pres/100) * Setting.first.try(:exam_weight)).round(2)
+    return ((pres/80) * Setting.first.try(:exam_weight)).round(2)
   end
 
   def to_s
