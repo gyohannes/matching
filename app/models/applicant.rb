@@ -23,9 +23,6 @@ uniq.sort_by(&:aptitude_and_interview).reverse
         a.program_choices.order('choice_number').each do |pc|
             pc.university_choices.order('choice_number').each do |uc|
             placed = Applicant.final_match(a,pc,uc)
-            if placed==true
-             break
-            end
       	  end
         end
     end
