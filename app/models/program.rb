@@ -3,6 +3,7 @@ class Program < ApplicationRecord
   has_many :placements
   has_many :program_quota
   has_many :program_choices
+  has_many :waiting_lists
 
   def unplaced_applicants
       if total_remaining_quota > 0
@@ -23,7 +24,7 @@ class Program < ApplicationRecord
   end
 
   def total_quota(university)
-    program_quota.where('university_id = ?',university).first.quota_number
+    program_quota.where('university_id = ?',university).first.try(:quota_number) || 0
   end
 
   def count_applicants(choice_number)
